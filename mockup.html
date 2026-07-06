@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<!--
+  Черновой макет реорганизации портфолио. Не заменяет index.html.
+  Дизайн (тёмная тема, переходы, карточки) взят из Example/ как референс.
+  Текст местами — заглушки в квадратных скобках [...], их предстоит заполнить.
+  Блоки .media-video / .shot-grid — место под реальные материалы:
+  видео вставляется так же, как в index.html (iframe kinescope.io/embed/...),
+  скриншоты — обычными <img> в сетку вместо пунктирных плейсхолдеров.
+-->
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Андрей Мутовкин — макет реорганизации портфолио</title>
+<style>
+  :root{
+    --bg:#0F0F0F;--band:#161616;--surface:#1A1A1A;--surface-2:#222222;
+    --border:#2A2A2A;--text:#FFFFFF;--muted:#8C8C8C;--muted-2:#666666;
+    --accent:#2D94FF;--radius:20px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter','Helvetica Neue',Arial,sans-serif;
+    line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .container{max-width:1140px;margin:0 auto;padding:0 32px}
+
+  /* заметка макета — виден только в этом черновике */
+  .draft-banner{background:#2D2000;color:#FFD37A;font-size:13px;text-align:center;
+    padding:9px 16px;border-bottom:1px solid #4a3a12}
+
+  nav{position:sticky;top:0;z-index:50;background:rgba(15,15,15,.85);
+    backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+  .nav-inner{max-width:1140px;margin:0 auto;padding:0 32px;height:64px;
+    display:flex;align-items:center;justify-content:space-between}
+  .nav-logo{font-weight:700;font-size:16px;cursor:pointer}
+  .nav-links{display:flex;gap:28px}
+  .nav-links a{color:var(--muted);font-size:14.5px;transition:color .15s;cursor:pointer}
+  .nav-links a:hover{color:var(--text)}
+
+  section{padding:96px 0}
+  .band{background:var(--band)}
+  .section-label{font-size:13px;text-transform:uppercase;letter-spacing:1.6px;
+    color:var(--muted-2);margin-bottom:28px}
+  h1{font-size:64px;font-weight:700;letter-spacing:-1.5px;line-height:1.05}
+  h2{font-size:36px;font-weight:700;letter-spacing:-.6px;margin-bottom:10px}
+  .lead{font-size:18px;color:#D6D6D6;max-width:740px}
+  .lead p{margin-bottom:18px}
+  .placeholder-text{color:var(--muted-2);font-style:italic}
+
+  /* HERO */
+  .hero{text-align:center;padding:96px 0 72px}
+  .avatar{width:148px;height:148px;border-radius:50%;margin:0 auto 30px;
+    background:linear-gradient(140deg,#2b3a4d,#161616);border:2px solid #fff;
+    display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:800;color:#fff;opacity:.92}
+  .hero .role{color:var(--accent);font-size:17px;font-weight:600;
+    margin-top:14px;letter-spacing:.3px}
+  .hero .pitch{color:#C8C8C8;font-size:21px;max-width:640px;margin:18px auto 0;line-height:1.5}
+  .btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent);
+    color:#fff;font-weight:600;font-size:14px;padding:12px 24px;border-radius:999px;
+    margin-top:28px;transition:transform .15s,filter .15s;cursor:pointer;border:none}
+  .btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+  .hero-contacts{display:flex;gap:14px;justify-content:center;margin-top:34px;flex-wrap:wrap}
+  .contact-pill{display:flex;align-items:center;gap:8px;background:var(--surface);
+    border:1px solid var(--border);padding:9px 16px;border-radius:999px;font-size:13.5px;
+    color:var(--muted);transition:border-color .15s,color .15s}
+  .contact-pill:hover{border-color:var(--accent);color:var(--text)}
+
+  /* STATS */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+  .stat .s-num{font-size:42px;font-weight:700;letter-spacing:-1px;color:#fff}
+  .stat .s-cap{color:var(--muted);font-size:14px;margin-top:6px}
+
+  /* PROCESS */
+  .process-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+  .process-text p{margin-bottom:16px;color:#D6D6D6;font-size:16px}
+  .steps{display:flex;flex-direction:column}
+  .step{display:flex;gap:16px;padding-bottom:20px;position:relative;cursor:pointer}
+  .step:not(:last-child)::before{content:"";position:absolute;left:9px;top:22px;
+    bottom:0;width:2px;background:var(--border)}
+  .step-dot{width:20px;height:20px;border-radius:50%;flex-shrink:0;
+    border:3px solid var(--accent);background:var(--band);z-index:1;transition:background .15s}
+  .step.open .step-dot{background:var(--accent)}
+  .step-body{flex:1}
+  .step-title{font-weight:600;font-size:16px;transition:color .15s}
+  .step:hover .step-title{color:var(--accent)}
+  .step-desc{color:var(--muted);font-size:13.5px;
+    max-height:0;overflow:hidden;opacity:0;
+    transition:max-height .3s ease,opacity .2s,margin .2s}
+  .step.open .step-desc{max-height:140px;opacity:1;margin-top:4px}
+
+  /* COMPANY CARDS (Опыт) */
+  .cards-recent{display:flex;flex-direction:column;gap:18px}
+  .company-card{display:flex;background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius);overflow:hidden;cursor:pointer;
+    transition:border-color .18s,transform .18s}
+  .company-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .cc-cover{width:230px;flex-shrink:0;display:flex;align-items:center;
+    justify-content:center;background:linear-gradient(140deg,#262626,#161616)}
+  .cc-cover .cc-mark{font-size:78px;font-weight:800;color:#fff;opacity:.13}
+  .company-card:hover .cc-cover{background:linear-gradient(140deg,#2b3a4d,#161616)}
+  .cc-body{flex:1;padding:30px 32px;display:flex;align-items:center;gap:20px;min-width:0}
+  .cc-main{flex:1;min-width:0}
+  .cc-top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .cc-name{font-size:25px;font-weight:700}
+  .cc-period{color:var(--muted-2);font-size:14px}
+  .cc-role{color:var(--accent);font-size:14px;margin-top:3px;font-weight:500}
+  .cc-desc{color:#C4C4C4;font-size:15px;margin-top:11px}
+  .card-note{display:inline-block;margin-top:14px;font-size:12.5px;color:var(--muted);
+    background:var(--surface-2);border:1px solid var(--border);
+    padding:5px 12px;border-radius:999px}
+  .cc-arrow{color:var(--muted-2);font-size:24px;flex-shrink:0;
+    transition:color .18s,transform .18s}
+  .company-card:hover .cc-arrow{color:var(--accent);transform:translateX(3px)}
+  .current-badge{font-size:11px;text-transform:uppercase;letter-spacing:.7px;
+    color:#6CDC8C;border:1px solid rgba(108,220,140,.45);
+    padding:3px 9px;border-radius:999px}
+
+  /* CASE ROWS: заголовки кейсов стоят парами в ряд в общем гриде с окном раскрытия */
+  .case-list{display:flex;flex-direction:column;gap:16px}
+  .case-row{display:grid;grid-template-columns:repeat(2,1fr);gap:0 16px}
+  .case-row.single{grid-template-columns:1fr}
+  .case-card{background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius);overflow:hidden;cursor:pointer;
+    transition:border-color .18s,transform .18s,border-radius .2s,background-color .2s}
+  .case-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .cs-thumb{height:128px;display:flex;align-items:center;justify-content:flex-end;
+    padding:0 24px;background:linear-gradient(140deg,#242424,#161616)}
+  .case-card:hover .cs-thumb{background:linear-gradient(140deg,#2b3a4d,#161616)}
+  .cs-thumb .cs-no{font-size:60px;font-weight:800;color:#fff;opacity:.12}
+  .cs-body{padding:22px 24px}
+  .cs-tag{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted-2)}
+  .cs-title{font-size:19px;font-weight:600;margin-top:8px}
+  .cs-sum{color:var(--muted);font-size:14px;margin-top:10px}
+  .cs-arrow{color:var(--accent);font-size:14px;margin-top:16px;font-weight:600}
+
+  /* окно снизу открывается на всю ширину ряда, но визуально "прирастает"
+     только к активной карточке — сосед по ряду остаётся самостоятельной карточкой */
+  .case-card.active{border-color:var(--accent);border-bottom-color:transparent;
+    border-bottom-left-radius:0;border-bottom-right-radius:0;transform:none!important}
+  .case-row-detail{grid-column:1 / -1;max-height:0;overflow:hidden;opacity:0;
+    background:var(--surface);border:1px solid transparent;border-top:none;
+    border-radius:0 0 var(--radius) var(--radius);
+    transition:max-height .4s ease,opacity .3s,border-color .3s}
+  .case-row-detail.open{max-height:4000px;opacity:1;border-color:var(--accent);padding:28px}
+
+  /* PET-ПРОЕКТЫ — отдельный акцент рамкой, как в примере */
+  .pet-card{border-color:rgba(45,148,255,.4)}
+  .pet-card .cs-thumb{background:linear-gradient(140deg,#22344a,#161616)}
+  .pet-badge{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:.7px;
+    color:var(--accent);border:1px solid rgba(45,148,255,.45);
+    padding:3px 9px;border-radius:999px;margin-top:8px}
+
+  /* SKILLS */
+  .skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+  .skill-group-title{font-size:13px;text-transform:uppercase;letter-spacing:1.2px;
+    color:var(--accent);font-weight:600;margin-bottom:14px}
+  .tag-row{display:flex;flex-wrap:wrap;gap:8px}
+  .tag{background:var(--surface-2);border:1px solid var(--border);padding:7px 14px;
+    border-radius:999px;font-size:13.5px;color:#D6D6D6}
+
+  /* PAGE (динамическая подстраница: компания / кейс) */
+  .page{display:none}
+  .page.active{display:block}
+  #home.active{display:block}
+  .back-link{display:inline-flex;align-items:center;gap:8px;color:var(--muted);
+    font-size:14px;margin-bottom:30px;transition:color .15s;cursor:pointer}
+  .back-link:hover{color:var(--accent)}
+  .page-cover{height:200px;border-radius:var(--radius);margin-bottom:32px;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(140deg,#2b3a4d,#161616)}
+  .page-cover .pc-mark{font-size:96px;font-weight:800;color:#fff;opacity:.14}
+  .page-head{border-bottom:1px solid var(--border);padding-bottom:36px;margin-bottom:40px}
+  .ph-tag{color:var(--muted-2);font-size:13px;text-transform:uppercase;letter-spacing:1px}
+  .page-head h1{font-size:42px;margin-top:10px}
+  .ph-period{color:var(--muted-2);font-size:14px;margin-top:10px}
+  .ph-desc{color:#CFCFCF;font-size:17px;margin-top:18px;max-width:760px}
+  .group-label{font-size:13px;text-transform:uppercase;letter-spacing:1.2px;
+    color:var(--accent);font-weight:600;margin:28px 0 12px}
+  .bullets{margin-top:4px;margin-bottom:20px}
+  .bullets li{list-style:none;padding-left:20px;position:relative;
+    color:#CACACA;font-size:15px;margin-bottom:10px}
+  .bullets li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;
+    border-radius:50%;background:var(--accent)}
+
+  /* CASE BLOCKS */
+  .case-block{background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius);padding:28px 30px;margin-bottom:16px}
+  .cb-label{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;
+    color:var(--accent);font-weight:600;margin-bottom:12px}
+  .cb-text{color:#D2D2D2;font-size:15.5px}
+  .cb-text.is-placeholder{color:var(--muted-2);font-style:italic}
+
+  /* МЕДИА: сюда встают реальные видео (kinescope iframe) и скриншоты */
+  .media-video{aspect-ratio:16/9;border:1.5px dashed var(--border);border-radius:var(--radius);
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    color:var(--muted-2);font-size:14px;padding:24px;margin-top:8px}
+  .shot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+  .shot-item{aspect-ratio:4/3;border:1.5px dashed var(--border);border-radius:14px;
+    display:flex;align-items:center;justify-content:center;color:var(--muted-2);font-size:13px}
+
+  footer{border-top:1px solid var(--border);padding:64px 0;text-align:center}
+  .f-title{font-size:30px;font-weight:700;margin-bottom:8px}
+  .f-sub{color:var(--muted);margin-bottom:8px}
+  .f-location{color:var(--muted-2);font-size:13px;margin-bottom:28px}
+  .f-contacts{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+
+  @media(max-width:860px){
+    .container{padding:0 20px}
+    .nav-inner{padding:0 20px}
+    h1{font-size:38px}
+    h2{font-size:26px}
+    .hero .pitch{font-size:17px}
+    .stats{grid-template-columns:repeat(2,1fr);gap:24px}
+    .process-grid{grid-template-columns:1fr;gap:32px}
+    .case-row{grid-template-columns:1fr}
+    .skills-grid{grid-template-columns:1fr;gap:24px}
+    .company-card{flex-direction:column}
+    .cc-cover{width:100%;height:110px}
+    .shot-grid{grid-template-columns:repeat(2,1fr)}
+    .nav-links{gap:14px}
+    .nav-links a{font-size:13px}
+  }
+</style>
+</head>
+<body>
+
+<div class="draft-banner">Черновой макет структуры — не финальный текст. index.html не тронут.</div>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo" onclick="go('home')">Андрей Мутовкин</div>
+    <div class="nav-links">
+      <a onclick="navTo('process')">Подход</a>
+      <a onclick="navTo('experience')">Опыт</a>
+      <a onclick="navTo('contacts')">Контакты</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= HOME ================= -->
+<div id="home" class="page active">
+
+  <!-- 1 · HERO -->
+  <div class="hero container">
+    <div class="avatar">АМ</div>
+    <h1>Андрей Мутовкин</h1>
+    <div class="role">ВЕДУЩИЙ АРХИТЕКТОР-ВИЗУАЛИЗАТОР · BIM-КООРДИНАТОР</div>
+    <div class="pitch">Разрабатываю интерактивные 3D-туры, работаю с 3D/BIM-моделями, создаю видео-презентации проектов на Unreal Engine.</div>
+    <button class="btn" onclick="navTo('experience')">Смотреть работы</button>
+    <div class="hero-contacts">
+      <a class="contact-pill" href="http://t.me/onemafe" target="_blank">Telegram</a>
+      <a class="contact-pill" href="https://wa.me/79516473213" target="_blank">WhatsApp</a>
+      <a class="contact-pill" href="mailto:onemafe@gmail.com">onemafe@gmail.com</a>
+    </div>
+  </div>
+
+  <!-- 2 · STATS -->
+  <div class="band">
+    <section class="container">
+      <div class="stats" id="stats"></div>
+    </section>
+  </div>
+
+  <!-- 3 · О СЕБЕ (заглушка) -->
+  <section class="container" id="about">
+    <div class="section-label">О себе</div>
+    <div class="lead">
+      <p class="placeholder-text">[Короткий рассказ о себе — опыт, бэкграунд, чем занимаюсь помимо визуализации. Заполнить позже.]</p>
+    </div>
+  </section>
+
+  <!-- 4 · ПОДХОД К ВИЗУАЛИЗАЦИИ -->
+  <div class="band">
+    <section class="container" id="process">
+      <div class="process-grid">
+        <div class="process-text">
+          <h2>Подход к визуализации</h2>
+          <p>Начинаю с BIM/3D-модели объекта — разбираюсь в пространстве и логике архитектуры до того, как приступать к визуализации.</p>
+          <p>Интерактивная визуализация — не пассивный ролик: зритель сам выбирает, куда идти и что смотреть.</p>
+          <p>Использую механики игровых движков — смена времени суток, логика NPC, интерактивные объекты, — чтобы удержать внимание и точнее передать масштаб и атмосферу пространства.</p>
+          <p>Если тур не нужен — собираю финальную видео-презентацию проекта на Unreal Engine.</p>
+        </div>
+        <div class="steps" id="steps"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 5 · ОПЫТ -->
+  <section class="container" id="experience">
+    <div class="section-label">Опыт</div>
+    <div class="cards-recent" id="experience-cards"></div>
+  </section>
+
+  <!-- 6 · ИНСТРУМЕНТЫ -->
+  <section class="container">
+    <div class="section-label">Инструменты</div>
+    <div class="skills-grid">
+      <div>
+        <div class="skill-group-title">BIM / архитектура</div>
+        <div class="tag-row" id="skills-bim"></div>
+      </div>
+      <div>
+        <div class="skill-group-title">Real-time / визуализация</div>
+        <div class="tag-row" id="skills-rt"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contacts">
+    <div class="f-title">Поговорим?</div>
+    <div class="f-sub">Открыт к проектам по интерактивной архитектурной визуализации</div>
+    <div class="f-location">Санкт-Петербург</div>
+    <div class="f-contacts">
+      <a class="btn" href="http://t.me/onemafe" target="_blank">Telegram ✈</a>
+      <a class="btn" style="background:var(--surface-2);border:1px solid var(--border)" href="https://wa.me/79516473213" target="_blank">WhatsApp</a>
+      <a class="btn" style="background:var(--surface-2);border:1px solid var(--border)" href="mailto:onemafe@gmail.com">onemafe@gmail.com</a>
+    </div>
+  </footer>
+
+</div>
+
+<!-- ================= DYNAMIC PAGE ================= -->
+<div id="dynamic" class="page">
+  <div class="container" style="padding-top:48px;padding-bottom:88px">
+    <div id="dynamic-content"></div>
+  </div>
+</div>
+
+<script>
+const DATA = {
+  stats:[
+    ["9 лет","в проектировании и визуализации"],
+    ["4","направления в разделе «Опыт»"],
+    ["6+","реализованных интерактивных кейсов"],
+    ["15+","инструментов в стеке"]
+  ],
+  process:[
+    ["Понимание пространства","работаю с BIM/3D-моделью объекта, разбираюсь в архитектуре и логике пространства"],
+    ["Не просто 3D-тур","зритель сам управляет — выбирает маршрут и точку внимания, а не смотрит готовый ролик"],
+    ["Геймификация","смена времени суток, логика NPC, интерактивные объекты — удерживают внимание и передают масштаб"],
+    ["Сборка","свет, анимации, VFX, аудиодизайн, монтаж в Unreal Engine"],
+    ["Доставка","PixelStreaming или веб-плеер — тур открывается в браузере без установки клиента"]
+  ],
+  skillsBim:["Revit","Sketchup","3Ds Max","AutoCAD","Pixyz","Photoshop","Rhinoceros"],
+  skillsRT:["Unreal Engine","Unity","Blender","iClone","SpeedTree","Render 5D","Twinmotion","Lumion"],
+
+  experience:[
+    {id:"marta",mark:"M",name:"MARTA",period:"настоящее время",role:"[должность]",
+     desc:"Текущее место работы. [Коротко о компании и задачах — заполнить.]",note:"1 кейс →",current:true},
+    {id:"krgp",mark:"K",name:"KRGP",period:"[годы работы]",role:"Ведущий архитектор-визуализатор · BIM-координатор",
+     desc:"Предыдущее место работы — интерактивная визуализация портфолио объектов компании на Unreal Engine.",note:"3 кейса →"},
+    {id:"architect",mark:"A",name:"Работа архитектором",period:"[годы работы]",role:"[должность]",
+     desc:"Опыт работы архитектором до перехода в интерактивную визуализацию — два места работы.",note:"2 кейса →"},
+    {id:"pet",mark:"P",name:"Pet-проекты",period:"личная инициатива",role:"",
+     desc:"Личные эксперименты вне работы — от необычных пространств до собственной игры.",note:"4 кейса →"}
+  ],
+  companies:{
+    marta:{
+      mark:"M",name:"MARTA",period:"[месяц/год] — настоящее время",
+      desc:"[Заполнить: чем занимается MARTA, какая роль и зона ответственности.]",
+      casesLabel:"Кейсы",cases:["marta-case1"]
+    },
+    krgp:{
+      mark:"K",name:"KRGP",period:"[месяц/год] — [месяц/год]",
+      desc:"Архитектурная визуализация для KRGP — интерактивные туры по портфолио проектов компании на Unreal Engine, работа с BIM-моделями объектов.",
+      casesLabel:"Кейсы",cases:["krgp-portfolio","android","arch-video"]
+    },
+    architect:{
+      mark:"A",name:"Работа архитектором",period:"[месяц/год] — [месяц/год]",
+      desc:"До перехода в интерактивную визуализацию работал архитектором — два места работы.",
+      casesLabel:"Места работы",cases:["inspat","control-systems"]
+    },
+    pet:{
+      mark:"P",name:"Pet-проекты",period:"личная инициатива",
+      desc:"Нерабочие проекты и эксперименты: необычные интерактивные пространства, инструменты и собственная игра.",
+      casesLabel:"Кейсы",cases:["gallery","baku","imperial-disorder","revit"]
+    }
+  },
+  cases:{
+    "marta-case1":{company:"marta",tag:"MARTA · Кейс",
+      title:"[Название кейса — заполнить]",
+      blocks:[
+        ["Контекст","[Заполнить]"],
+        ["Задача","[Заполнить]"],
+        ["Действия","[Заполнить]"],
+        ["Результат","[Заполнить]"]
+      ],media:true,placeholder:true},
+    "krgp-portfolio":{company:"krgp",tag:"KRGP · Интерактивная визуализация",
+      title:"Интерактивное портфолио проектов KRGP",
+      summary:"Интерактивный 3D-тур по портфолио объектов компании на Unreal Engine с доставкой через PixelStreaming.",
+      blocks:[
+        ["Задача","Показать портфолио реализованных объектов компании в формате, который вовлекает сильнее, чем рендеры и видео-ролики."],
+        ["Что сделал","Собрал интерактивный тур по нескольким объектам на едином UI-шаблоне в фирменном стиле KRGP: смена времени суток, базовая логика NPC, навигация между объектами."],
+        ["Доставка","Настроил PixelStreaming — тур открывается в браузере по ссылке, без установки клиента."]
+      ],media:{video:"https://kinescope.io/embed/tVskRenyKGD2MbrsZmPobn",
+        shots:["images/tild6334-3766-4663-a562-353734623435/image_2025-06-21_21-.png",null,null]}},
+    android:{company:"krgp",tag:"KRGP · Кейс",
+      title:"Интерактивный макет на Android",
+      summary:"[Коротко — для кого и зачем]",
+      blocks:[
+        ["О проекте","[Заполнить]"],
+        ["Что сделал","[Заполнить]"]
+      ],media:{video:"https://kinescope.io/embed/7kEqUsSvd8SwSaE2fa96fg",shots:[null,null,null]},placeholder:true},
+    "arch-video":{company:"krgp",tag:"KRGP · Архитектурные видео",
+      title:"Архитектурные видео",
+      summary:"Видео-презентации проектов компании на Unreal Engine.",
+      groups:[
+        {label:"Здание тира",video:"https://kinescope.io/embed/tn3Netg9oYzz5HnNsQRSvx",items:[
+          "[Заполнить — что за объект, для кого]",
+          "Свет, анимации и VFX, смена времени суток и погоды, аудиодизайн, финальный монтаж в Unreal Engine"
+        ]},
+        {label:"Центр велоспорта",video:"https://kinescope.io/embed/g2eNADecxnosug9JMP7oG2",items:[
+          "[Заполнить — что за объект, для кого]",
+          "Тот же пайплайн: свет, анимации и VFX, смена времени суток и погоды, аудиодизайн, монтаж"
+        ]}
+      ]},
+    inspat:{company:"architect",tag:"Работа архитектором · Инспат",
+      title:"Инспат",
+      summary:"[Годы, роль — заполнить]",
+      blocks:[
+        ["О компании","[Заполнить]"],
+        ["Роль","[Заполнить]"],
+        ["Чем занимался","[Заполнить]"]
+      ],media:false,placeholder:true},
+    "control-systems":{company:"architect",tag:"Работа архитектором · Системы управления",
+      title:"Системы управления",
+      summary:"[Годы, роль — заполнить]",
+      blocks:[
+        ["О компании","[Заполнить]"],
+        ["Роль","[Заполнить]"],
+        ["Чем занимался","[Заполнить]"]
+      ],media:false,placeholder:true},
+    gallery:{company:"pet",tag:"Pet-проекты · Кейс",
+      title:"Интерактивная галерея с неевклидовым пространством",
+      summary:"[Коротко — идея проекта]",
+      blocks:[
+        ["Идея","[Заполнить]"],
+        ["Что сделал","[Заполнить]"]
+      ],media:{video:"https://kinescope.io/embed/ub1XmYHRPUV4KVqY4Avw9C?behaviour%5BautoPlay%5D=true&behaviour%5Bloop%5D=true&behaviour%5Bmuted%5D=true&behaviour%5BplaysInline%5D=true&ui%5Bcontrols%5D=false&ui%5BmainPlayButton%5D=false",shots:[null,null,null]},placeholder:true},
+    baku:{company:"pet",tag:"Pet-проекты · Кейс",
+      title:"Интерактивный двор Бака с заметками о его истории",
+      summary:"[Коротко — идея проекта]",
+      blocks:[
+        ["Идея","[Заполнить]"],
+        ["Что сделал","[Заполнить]"]
+      ],media:{video:"https://kinescope.io/embed/e5H3hHp4a78HeDSqcj28yt?behaviour%5BautoPlay%5D=true&behaviour%5Bloop%5D=true&behaviour%5Bmuted%5D=true&behaviour%5BplaysInline%5D=true&ui%5Bcontrols%5D=false&ui%5BmainPlayButton%5D=false",shots:[null,null,null]},placeholder:true},
+    "imperial-disorder":{company:"pet",tag:"Pet-проекты · Игра",
+      title:"Компьютерная игра «Imperial Disorder»",
+      summary:"[Коротко — жанр, платформа, что за игра]",
+      blocks:[
+        ["О проекте","[Заполнить]"],
+        ["Что сделал","[Заполнить]"]
+      ],media:{video:"https://kinescope.io/embed/veig4eczoNayRshWKXRRD7?behaviour%5BautoPlay%5D=true&behaviour%5Bloop%5D=true&behaviour%5Bmuted%5D=true&behaviour%5BplaysInline%5D=true&ui%5Bcontrols%5D=false&ui%5BmainPlayButton%5D=false",shots:[null,null,null]},placeholder:true},
+    revit:{company:"pet",tag:"Pet-проекты · Кейс",
+      title:"Веб-проигрыватель файлов Revit",
+      summary:"[Коротко — для кого и зачем]",
+      blocks:[
+        ["О проекте","[Заполнить]"],
+        ["Что сделал","[Заполнить]"]
+      ],media:{video:"https://kinescope.io/embed/qP55cCHFF2x8PZm3oXmLYY",shots:[null,null,null]},placeholder:true}
+  }
+};
+
+function renderHome(){
+  document.getElementById('stats').innerHTML = DATA.stats.map(s=>`
+    <div class="stat"><div class="s-num">${s[0]}</div><div class="s-cap">${s[1]}</div></div>`).join('');
+
+  document.getElementById('skills-bim').innerHTML = DATA.skillsBim.map(t=>`<span class="tag">${t}</span>`).join('');
+  document.getElementById('skills-rt').innerHTML = DATA.skillsRT.map(t=>`<span class="tag">${t}</span>`).join('');
+
+  document.getElementById('experience-cards').innerHTML = DATA.experience.map(c=>`
+    <div class="company-card" onclick="go('company:${c.id}')">
+      <div class="cc-cover"><span class="cc-mark">${c.mark}</span></div>
+      <div class="cc-body">
+        <div class="cc-main">
+          <div class="cc-top"><span class="cc-name">${c.name}</span><span class="cc-period">${c.period}</span>${c.current?'<span class="current-badge">Сейчас</span>':''}</div>
+          <div class="cc-role">${c.role}</div>
+          <div class="cc-desc">${c.desc}</div>
+          <span class="card-note">${c.note}</span>
+        </div>
+        <div class="cc-arrow">→</div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('steps').innerHTML = DATA.process.map((s,i)=>`
+    <div class="step${i===0?' open':''}" onclick="toggleStep(this)">
+      <div class="step-dot"></div>
+      <div class="step-body"><div class="step-title">${s[0]}</div><div class="step-desc">${s[1]}</div></div>
+    </div>`).join('');
+}
+
+function renderCompany(id){
+  const c = DATA.companies[id];
+  const isPet = id==='pet';
+  let html = `<div class="back-link" onclick="go('home')">← На главную</div>
+    <div class="page-cover"><span class="pc-mark">${c.mark}</span></div>
+    <div class="page-head">
+      <h1>${c.name}</h1>
+      <div class="ph-period">${c.period}</div>
+      <div class="ph-desc">${c.desc}</div>
+    </div>`;
+  if(c.cases){
+    const rows = [];
+    for(let i=0;i<c.cases.length;i+=2){ rows.push(c.cases.slice(i,i+2)); }
+    html += `<h2 style="margin-top:8px;margin-bottom:20px">${c.casesLabel}</h2>
+      <div class="case-list">${rows.map((row,ri)=>{
+        const heads = row.map((cid,ci)=>{
+          const cs = DATA.cases[cid];
+          const num = ri*2+ci+1;
+          return `<div class="case-card${isPet?' pet-card':''}" onclick="toggleCase(this,'${cid}')">
+            <div class="cs-thumb"><span class="cs-no">0${num}</span></div>
+            <div class="cs-body">
+              <div class="cs-tag">${cs.tag}</div>
+              <div class="cs-title">${cs.title}</div>
+              <div class="cs-sum">${cs.summary||''}</div>
+              <div class="cs-arrow">Открыть →</div>
+            </div></div>`;
+        }).join('');
+        return `<div class="case-row${row.length===1?' single':''}">${heads}<div class="case-row-detail"></div></div>`;
+      }).join('')}</div>`;
+  }
+  return html;
+}
+
+function renderCaseBody(id){
+  const cs = DATA.cases[id];
+  let html = '';
+  if(cs.blocks){
+    cs.blocks.forEach(b=>{
+      const isPh = cs.placeholder;
+      html += `<div class="case-block"><div class="cb-label">${b[0]}</div><div class="cb-text${isPh?' is-placeholder':''}">${b[1]}</div></div>`;
+    });
+  }
+  if(cs.groups){
+    cs.groups.forEach(g=>{
+      html += `<div class="group-label">${g.label}</div>
+        <ul class="bullets">${g.items.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+      if(g.video) html += renderVideoEmbed(g.video);
+    });
+  }
+  if(cs.media){
+    html += `<div class="group-label">Медиа</div>` + renderMedia(cs.media);
+  }
+  return html;
+}
+
+function toggleCase(headerEl,id){
+  const list = headerEl.closest('.case-list');
+  const row = headerEl.closest('.case-row');
+  const detail = row.querySelector('.case-row-detail');
+  const wasOpenSame = detail.classList.contains('open') && detail.dataset.openId===id;
+
+  list.querySelectorAll('.case-row-detail.open').forEach(d=>{
+    d.classList.remove('open');
+    d.dataset.openId = '';
+  });
+  list.querySelectorAll('.case-card.active').forEach(c=>{
+    c.classList.remove('active');
+    c.querySelector('.cs-arrow').textContent = 'Открыть →';
+  });
+
+  if(!wasOpenSame){
+    detail.innerHTML = renderCaseBody(id);
+    detail.classList.add('open');
+    detail.dataset.openId = id;
+    headerEl.classList.add('active');
+    headerEl.querySelector('.cs-arrow').textContent = 'Свернуть ↑';
+  }
+}
+
+function renderVideoEmbed(src){
+  return `<div class="media-video" style="border-style:solid;padding:0;overflow:hidden">
+    <iframe src="${src}" style="width:100%;height:100%;border:0;" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+  </div>`;
+}
+
+function renderMedia(media){
+  if(media===true){
+    return `<div class="media-video">Видео проекта — сюда встаёт &lt;iframe src="https://kinescope.io/embed/..."&gt; как в index.html</div>
+      <div class="shot-grid">
+        <div class="shot-item">Скрин 1</div>
+        <div class="shot-item">Скрин 2</div>
+        <div class="shot-item">Скрин 3</div>
+      </div>`;
+  }
+  let html = '';
+  if(media.video) html += renderVideoEmbed(media.video);
+  if(media.shots){
+    html += `<div class="shot-grid">${media.shots.map((s,i)=>
+      s ? `<div class="shot-item" style="border-style:solid;padding:0;overflow:hidden"><img src="${s}" style="width:100%;height:100%;object-fit:cover;border-radius:14px"></div>`
+        : `<div class="shot-item">Скрин ${i+1}</div>`
+    ).join('')}</div>`;
+  }
+  return html;
+}
+
+function toggleStep(el){
+  const wasOpen=el.classList.contains('open');
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('open'));
+  if(!wasOpen) el.classList.add('open');
+}
+function go(route){location.hash=route}
+function navTo(id){
+  if((location.hash||'#home').slice(1)!=='home'){location.hash='home';}
+  setTimeout(()=>{const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth'});},80);
+}
+function router(){
+  const hash=(location.hash||'#home').slice(1);
+  const home=document.getElementById('home');
+  const dyn=document.getElementById('dynamic');
+  const dc=document.getElementById('dynamic-content');
+  if(hash.startsWith('company:')){
+    dc.innerHTML=renderCompany(hash.split(':')[1]);
+    home.classList.remove('active');dyn.classList.add('active');window.scrollTo(0,0);
+  }else{
+    dyn.classList.remove('active');home.classList.add('active');
+  }
+}
+window.addEventListener('hashchange',router);
+renderHome();
+router();
+</script>
+</body>
+</html>
