@@ -1,0 +1,17 @@
+# Video assets are too large for a normal git repo (one file exceeds GitHub's
+# 100MB per-file limit). Keep them on disk locally / host separately.
+video/
+
+# Environment & secrets
+.env
+.env.local
+
+# Claude Code local settings (machine-specific permission state)
+.claude/settings.local.json
+
+# Node (in case local tooling like `npx serve` creates this later)
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
