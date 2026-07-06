@@ -8,6 +8,7 @@ video/
 
 # Claude Code local settings (machine-specific permission state)
 .claude/settings.local.json
+.claude/scheduled_tasks.lock
 
 # Node (in case local tooling like `npx serve` creates this later)
 node_modules/
