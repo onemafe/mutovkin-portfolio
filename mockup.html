@@ -12,17 +12,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Андрей Мутовкин — макет реорганизации портфолио</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0F0F0F;--band:#161616;--surface:#1A1A1A;--surface-2:#222222;
     --border:#2A2A2A;--text:#FFFFFF;--muted:#8C8C8C;--muted-2:#666666;
     --accent:#2D94FF;--radius:20px;
+    --font-display:"Inter Tight","SF Pro Display",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    --font-text:"Inter","SF Pro Text",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
   body{background:var(--bg);color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter','Helvetica Neue',Arial,sans-serif;
-    line-height:1.55;-webkit-font-smoothing:antialiased}
+    font-family:var(--font-text);
+    line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
   a{color:inherit;text-decoration:none}
   .container{max-width:1140px;margin:0 auto;padding:0 32px}
 
@@ -32,45 +37,121 @@
 
   nav{position:sticky;top:0;z-index:50;background:rgba(15,15,15,.85);
     backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
-  .nav-inner{max-width:1140px;margin:0 auto;padding:0 32px;height:64px;
+  .nav-inner{position:relative;max-width:1140px;margin:0 auto;padding:0 32px;height:64px;
     display:flex;align-items:center;justify-content:space-between}
-  .nav-logo{font-weight:700;font-size:16px;cursor:pointer}
-  .nav-links{display:flex;gap:28px}
+  .nav-logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;
+    font-family:var(--font-display);cursor:pointer}
+  .nav-avatar{width:0;height:32px;overflow:hidden;border-radius:50%;opacity:0;
+    transform:scale(.6);flex-shrink:0;
+    transition:width 320ms cubic-bezier(.2,.7,.3,1),opacity 280ms cubic-bezier(.2,.7,.3,1),
+      transform 320ms cubic-bezier(.2,.7,.3,1)}
+  .nav-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+  .nav-logo.scrolled .nav-avatar{width:32px;opacity:1;transform:scale(1)}
+  .nav-links{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    display:flex;gap:28px}
   .nav-links a{color:var(--muted);font-size:14.5px;transition:color .15s;cursor:pointer}
   .nav-links a:hover{color:var(--text)}
 
-  section{padding:96px 0}
+  section{padding:clamp(36px,4.5vw,64px) 0}
   .band{background:var(--band)}
   .section-label{font-size:13px;text-transform:uppercase;letter-spacing:1.6px;
     color:var(--muted-2);margin-bottom:28px}
-  h1{font-size:64px;font-weight:700;letter-spacing:-1.5px;line-height:1.05}
-  h2{font-size:36px;font-weight:700;letter-spacing:-.6px;margin-bottom:10px}
+  h1{font-family:var(--font-display);font-size:64px;font-weight:700;letter-spacing:-1.5px;line-height:1.05}
+  h2{font-family:var(--font-display);font-size:36px;font-weight:700;letter-spacing:-.6px;margin-bottom:10px}
   .lead{font-size:18px;color:#D6D6D6;max-width:740px}
   .lead p{margin-bottom:18px}
   .placeholder-text{color:var(--muted-2);font-style:italic}
 
   /* HERO */
-  .hero{text-align:center;padding:96px 0 72px}
-  .avatar{width:148px;height:148px;border-radius:50%;margin:0 auto 30px;
-    background:linear-gradient(140deg,#2b3a4d,#161616);border:2px solid #fff;
-    display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:800;color:#fff;opacity:.92}
-  .hero .role{color:var(--accent);font-size:17px;font-weight:600;
+  .hero{text-align:center;padding:clamp(120px,14vw,200px) 0 clamp(96px,11vw,160px)}
+  .avatar{width:156px;height:156px;border-radius:50%;margin:0;
+    background:var(--surface);border:2px solid var(--text);
+    overflow:hidden;position:relative;z-index:2}
+  .avatar img{width:100%;height:100%;object-fit:cover;object-position:center 10%}
+
+  /* мягкие анимированные пятна за аватаром — точная копия референса */
+  .avatar-wrap{position:relative;display:flex;align-items:center;justify-content:center;
+    width:100%;height:156px;margin:0 auto 12px;isolation:isolate}
+  .blob{position:absolute;border-radius:50%;filter:blur(85px);opacity:.5;
+    pointer-events:none;z-index:1;will-change:transform}
+  .blob-1{width:180px;height:180px;background:#2D94FF;top:0;left:50%;margin-left:-90px;
+    animation:blobA 9s ease-in-out infinite}
+  .blob-2{width:150px;height:150px;background:#FFC93C;top:35px;left:50%;margin-left:-75px;
+    opacity:.4;animation:blobB 11s ease-in-out infinite}
+  .blob-3{width:168px;height:168px;background:#FF6BA0;top:16px;left:50%;margin-left:-84px;
+    opacity:.4;animation:blobC 7s ease-in-out infinite}
+  @keyframes blobA{0%,100%{transform:translate(-60px,-10px) scale(1)}50%{transform:translate(60px,20px) scale(1.1)}}
+  @keyframes blobB{0%,100%{transform:translate(50px,-20px) scale(1)}50%{transform:translate(-50px,30px) scale(.95)}}
+  @keyframes blobC{0%,100%{transform:translate(0,40px) scale(1.05)}50%{transform:translate(0,-40px) scale(.9)}}
+  @media(prefers-reduced-motion:reduce){.blob{animation:none!important}}
+
+  .hero .role{color:rgba(255,255,255,.4);font-size:17px;font-weight:600;
     margin-top:14px;letter-spacing:.3px}
   .hero .pitch{color:#C8C8C8;font-size:21px;max-width:640px;margin:18px auto 0;line-height:1.5}
   .btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent);
     color:#fff;font-weight:600;font-size:14px;padding:12px 24px;border-radius:999px;
     margin-top:28px;transition:transform .15s,filter .15s;cursor:pointer;border:none}
   .btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
-  .hero-contacts{display:flex;gap:14px;justify-content:center;margin-top:34px;flex-wrap:wrap}
-  .contact-pill{display:flex;align-items:center;gap:8px;background:var(--surface);
-    border:1px solid var(--border);padding:9px 16px;border-radius:999px;font-size:13.5px;
-    color:var(--muted);transition:border-color .15s,color .15s}
-  .contact-pill:hover{border-color:var(--accent);color:var(--text)}
+  .btn.white{background:var(--text);color:var(--bg);border:1px solid var(--text)}
+  .btn.white:hover{filter:none;background:rgba(255,255,255,.9)}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+  .btn.ghost:hover{background:transparent;border-color:var(--text);filter:none}
+  .btn.sm{margin-top:0;padding:8px 16px;font-size:13px}
+  /* Telegram-кнопки — фирменный синий телеграма, а не общий акцент */
+  a.btn[href*="t.me"]:not(.ghost){background:#26A5E4;border-color:#26A5E4;color:#fff}
 
-  /* STATS */
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
-  .stat .s-num{font-size:42px;font-weight:700;letter-spacing:-1px;color:#fff}
-  .stat .s-cap{color:var(--muted);font-size:14px;margin-top:6px}
+  /* ПРИВЕТ (о себе) */
+  .hello-grid{display:grid;grid-template-columns:1fr 240px;gap:clamp(28px,4vw,48px);
+    align-items:center;justify-items:center}
+  .hello-grid .lead{justify-self:stretch}
+  .hello-grid .lead p{font-size:clamp(15px,1.2vw,17px)}
+  .hello-grid .wave-wrap{position:relative;display:flex;align-items:center;
+    justify-content:center;cursor:pointer}
+  .wave-emoji{font-size:200px;line-height:1;display:inline-block;
+    filter:drop-shadow(0 12px 30px rgba(0,0,0,.4));
+    transform-origin:70% 85%;animation:handWave 5s ease-in-out infinite}
+  @keyframes handWave{
+    0%,70%,100%{transform:rotate(-6deg)}
+    74%{transform:rotate(10deg)}78%{transform:rotate(-14deg)}
+    82%{transform:rotate(10deg)}86%{transform:rotate(-14deg)}
+    90%{transform:rotate(8deg)}94%{transform:rotate(-6deg)}
+  }
+  @media(prefers-reduced-motion:reduce){.wave-emoji{animation:none}}
+  @media(max-width:800px){
+    .hello-grid{grid-template-columns:1fr}
+    .wave-emoji{font-size:130px}
+  }
+
+  /* стикер-эффект: тап по ладони — короткий подскок + разлетающиеся частицы, как в Telegram */
+  .wave-emoji.pop{animation:handWave 5s ease-in-out infinite,wavePop .5s cubic-bezier(.2,.7,.3,1)}
+  @keyframes wavePop{
+    0%{transform:scale(1) rotate(-6deg)}
+    35%{transform:scale(1.3) rotate(18deg)}
+    60%{transform:scale(.92) rotate(-16deg)}
+    100%{transform:scale(1) rotate(-6deg)}
+  }
+  .wave-particle{position:absolute;left:50%;top:45%;border-radius:50%;
+    pointer-events:none;will-change:transform,opacity;
+    animation:waveParticle .7s cubic-bezier(.2,.7,.3,1) forwards}
+  @keyframes waveParticle{
+    to{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .wave-emoji.pop{animation:none}
+    .wave-particle{display:none}
+  }
+
+  /* ЧТО ГОВОРЯТ КОЛЛЕГИ */
+  .testimonials-row{display:flex;gap:20px;overflow-x:auto;padding-bottom:8px}
+  .testimonial-card{flex:none;width:clamp(260px,28vw,360px);background:var(--surface);
+    border:1px solid var(--border);border-radius:var(--radius);padding:24px 26px 22px;
+    display:flex;flex-direction:column;gap:18px}
+  .testimonial-text{color:#D2D2D2;font-size:15px;line-height:1.5}
+  .testimonial-meta{margin-top:auto}
+  .testimonial-name{font-family:var(--font-display);font-weight:600;font-size:15px}
+  .testimonial-role{color:var(--muted);font-size:13px;margin-top:2px}
+  .testimonial-company{color:#D6D6D6}
+  @media(max-width:700px){.testimonial-card{width:82vw}}
 
   /* PROCESS */
   .process-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
@@ -97,9 +178,14 @@
     transition:border-color .18s,transform .18s}
   .company-card:hover{border-color:var(--accent);transform:translateY(-2px)}
   .cc-cover{width:230px;flex-shrink:0;display:flex;align-items:center;
-    justify-content:center;background:linear-gradient(140deg,#262626,#161616)}
+    justify-content:center;background:linear-gradient(140deg,#262626,#161616);overflow:hidden}
   .cc-cover .cc-mark{font-size:78px;font-weight:800;color:#fff;opacity:.13}
   .company-card:hover .cc-cover{background:linear-gradient(140deg,#2b3a4d,#161616)}
+  .cc-cover.has-photo{padding:0}
+  .cc-cover.has-photo img{width:100%;height:100%;object-fit:cover;display:block}
+  .cc-logo-box{background:#fff;border-radius:12px;padding:16px 22px;
+    display:flex;align-items:center;justify-content:center;max-width:78%;max-height:70%}
+  .cc-logo-box img{max-width:100%;max-height:100%;object-fit:contain;display:block}
   .cc-body{flex:1;padding:30px 32px;display:flex;align-items:center;gap:20px;min-width:0}
   .cc-main{flex:1;min-width:0}
   .cc-top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
@@ -117,10 +203,13 @@
     color:#6CDC8C;border:1px solid rgba(108,220,140,.45);
     padding:3px 9px;border-radius:999px}
 
-  /* CASE ROWS: заголовки кейсов стоят парами в ряд в общем гриде с окном раскрытия */
+  /* CASE ROWS: заголовки кейсов стоят парами в ряд; средняя строка грида (0/16px) —
+     зазор, который появляется только со стороны неактивной соседней карточки */
   .case-list{display:flex;flex-direction:column;gap:16px}
-  .case-row{display:grid;grid-template-columns:repeat(2,1fr);gap:0 16px}
+  .case-row{display:grid;grid-template-columns:repeat(2,1fr);
+    grid-template-rows:auto 0 auto;column-gap:16px;row-gap:0}
   .case-row.single{grid-template-columns:1fr}
+  .case-row.has-open:not(.single){grid-template-rows:auto 16px auto}
   .case-card{background:var(--surface);border:1px solid var(--border);
     border-radius:var(--radius);overflow:hidden;cursor:pointer;
     transition:border-color .18s,transform .18s,border-radius .2s,background-color .2s}
@@ -129,20 +218,35 @@
     padding:0 24px;background:linear-gradient(140deg,#242424,#161616)}
   .case-card:hover .cs-thumb{background:linear-gradient(140deg,#2b3a4d,#161616)}
   .cs-thumb .cs-no{font-size:60px;font-weight:800;color:#fff;opacity:.12}
+  .cs-thumb.has-logo{justify-content:center}
   .cs-body{padding:22px 24px}
   .cs-tag{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted-2)}
   .cs-title{font-size:19px;font-weight:600;margin-top:8px}
   .cs-sum{color:var(--muted);font-size:14px;margin-top:10px}
   .cs-arrow{color:var(--accent);font-size:14px;margin-top:16px;font-weight:600}
 
-  /* окно снизу открывается на всю ширину ряда, но визуально "прирастает"
-     только к активной карточке — сосед по ряду остаётся самостоятельной карточкой */
+  /* карточка + перемычка + окно читаются как один слитный элемент со скруглёнными
+     углами; со стороны неактивного соседа образуется отступ с одним скруглённым
+     (вогнутым) углом на стыке. Перемычка на 1px "заезжает" на верх окна и стоит
+     выше по z-index, чтобы скрыть шов между собой и окном */
   .case-card.active{border-color:var(--accent);border-bottom-color:transparent;
     border-bottom-left-radius:0;border-bottom-right-radius:0;transform:none!important}
-  .case-row-detail{grid-column:1 / -1;max-height:0;overflow:hidden;opacity:0;
-    background:var(--surface);border:1px solid transparent;border-top:none;
-    border-radius:0 0 var(--radius) var(--radius);
-    transition:max-height .4s ease,opacity .3s,border-color .3s}
+  .case-connector{grid-row:2;position:relative;background:var(--surface);
+    border-left:1px solid transparent;border-right:1px solid transparent;
+    transition:border-color .3s}
+  .case-connector.attach-1{grid-column:1}
+  .case-connector.attach-2{grid-column:2}
+  .case-row.single .case-connector{grid-column:1 / -1}
+  .case-row.has-open .case-connector{border-color:var(--accent)}
+  .case-row.has-open:not(.single) .case-connector{z-index:2;margin-bottom:-1px}
+  .case-row.has-open:not(.single) .case-connector.attach-1{border-bottom-right-radius:var(--radius)}
+  .case-row.has-open:not(.single) .case-connector.attach-2{border-bottom-left-radius:var(--radius)}
+  .case-row-detail{grid-row:3;grid-column:1 / -1;max-height:0;overflow:hidden;opacity:0;
+    background:var(--surface);border:1px solid transparent;border-radius:var(--radius);
+    transition:max-height .4s ease,opacity .3s,border-color .3s,border-radius .2s}
+  .case-row-detail.attach-1{border-top-left-radius:0}
+  .case-row-detail.attach-2{border-top-right-radius:0}
+  .case-row.single .case-row-detail{border-top:none;border-top-left-radius:0;border-top-right-radius:0}
   .case-row-detail.open{max-height:4000px;opacity:1;border-color:var(--accent);padding:28px}
 
   /* PET-ПРОЕКТЫ — отдельный акцент рамкой, как в примере */
@@ -212,15 +316,17 @@
     h1{font-size:38px}
     h2{font-size:26px}
     .hero .pitch{font-size:17px}
-    .stats{grid-template-columns:repeat(2,1fr);gap:24px}
     .process-grid{grid-template-columns:1fr;gap:32px}
-    .case-row{grid-template-columns:1fr}
+    .case-row{display:flex;flex-direction:column;gap:16px}
+    .case-connector{display:none}
+    .case-row-detail{border-radius:var(--radius)!important}
     .skills-grid{grid-template-columns:1fr;gap:24px}
     .company-card{flex-direction:column}
     .cc-cover{width:100%;height:110px}
     .shot-grid{grid-template-columns:repeat(2,1fr)}
     .nav-links{gap:14px}
     .nav-links a{font-size:13px}
+    .nav-cta-btn{display:none}
   }
 </style>
 </head>
@@ -230,12 +336,16 @@
 
 <nav>
   <div class="nav-inner">
-    <div class="nav-logo" onclick="go('home')">Андрей Мутовкин</div>
+    <div class="nav-logo" onclick="go('home')">
+      <span class="nav-avatar"><img src="images/photos/IMG_9476_F.jpg" alt=""></span>
+      Андрей Мутовкин
+    </div>
     <div class="nav-links">
       <a onclick="navTo('process')">Подход</a>
       <a onclick="navTo('experience')">Опыт</a>
       <a onclick="navTo('contacts')">Контакты</a>
     </div>
+    <a class="btn ghost sm nav-cta-btn" href="http://t.me/onemafe" target="_blank">Связаться ↗</a>
   </div>
 </nav>
 
@@ -244,31 +354,39 @@
 
   <!-- 1 · HERO -->
   <div class="hero container">
-    <div class="avatar">АМ</div>
-    <h1>Андрей Мутовкин</h1>
-    <div class="role">ВЕДУЩИЙ АРХИТЕКТОР-ВИЗУАЛИЗАТОР · BIM-КООРДИНАТОР</div>
-    <div class="pitch">Разрабатываю интерактивные 3D-туры, работаю с 3D/BIM-моделями, создаю видео-презентации проектов на Unreal Engine.</div>
-    <button class="btn" onclick="navTo('experience')">Смотреть работы</button>
-    <div class="hero-contacts">
-      <a class="contact-pill" href="http://t.me/onemafe" target="_blank">Telegram</a>
-      <a class="contact-pill" href="https://wa.me/79516473213" target="_blank">WhatsApp</a>
-      <a class="contact-pill" href="mailto:onemafe@gmail.com">onemafe@gmail.com</a>
+    <div class="avatar-wrap">
+      <span class="blob blob-1" aria-hidden="true"></span>
+      <span class="blob blob-2" aria-hidden="true"></span>
+      <span class="blob blob-3" aria-hidden="true"></span>
+      <div class="avatar"><img src="images/photos/IMG_9476_F.jpg" alt="Андрей Мутовкин"></div>
     </div>
+    <h1>Андрей Мутовкин</h1>
+    <div class="role">ДИЗАЙНЕР ИНТЕРАКТИВНЫХ ПРОСТРАНСТВ</div>
+    <div class="pitch">Соединяю архитектуру и игровые движки. Превращаю проекты в пространства, которые можно исследовать, а не просто смотреть.</div>
+    <button class="btn white" onclick="navTo('experience')">Смотреть работы</button>
   </div>
 
-  <!-- 2 · STATS -->
+  <!-- 2 · О СЕБЕ -->
   <div class="band">
-    <section class="container">
-      <div class="stats" id="stats"></div>
+    <section class="container" id="about">
+      <div class="section-label">Привет</div>
+      <div class="hello-grid">
+        <div class="lead">
+          <p>Я дизайнер интерактивных пространств. А ещё архитектор — поэтому в проектах сначала разбираюсь, какой опыт хочу создать для пользователя, а уже потом — с инструментами, которые до этого доведут.</p>
+          <p>Коммерческой разработкой на игровых движках занимаюсь 2 года — это проекты по интерактивной архитектурной визуализации. Сейчас — Level Designer Generalist в студии визуализации MARTA. До этого в одиночку делал интерактивное портфолио проектов для проектного института KRGP.</p>
+          <p>До перехода в разработку 7 лет занимался архитектурным проектированием и BIM-технологиями в строительстве — вёл проекты, координировал работу команд инженеров.</p>
+          <p>🤝 Люблю помогать людям: делать продукты удобными и живыми, налаживать процессы, разрешать спорные ситуации. Нравится объяснять и отстаивать решения — и видеть, как другому становится понятнее и увереннее.</p>
+          <a class="btn" href="http://t.me/onemafe" target="_blank" style="margin-top:20px">Telegram ✈</a>
+        </div>
+        <div class="wave-wrap" onclick="waveBurst(this)"><span class="wave-emoji">👋</span></div>
+      </div>
     </section>
   </div>
 
-  <!-- 3 · О СЕБЕ (заглушка) -->
-  <section class="container" id="about">
-    <div class="section-label">О себе</div>
-    <div class="lead">
-      <p class="placeholder-text">[Короткий рассказ о себе — опыт, бэкграунд, чем занимаюсь помимо визуализации. Заполнить позже.]</p>
-    </div>
+  <!-- 3 · ОПЫТ -->
+  <section class="container" id="experience">
+    <div class="section-label">Опыт · последние 4 года</div>
+    <div class="cards-recent" id="experience-cards"></div>
   </section>
 
   <!-- 4 · ПОДХОД К ВИЗУАЛИЗАЦИИ -->
@@ -276,7 +394,7 @@
     <section class="container" id="process">
       <div class="process-grid">
         <div class="process-text">
-          <h2>Подход к визуализации</h2>
+          <div class="section-label">Принципы работы</div>
           <p>Начинаю с BIM/3D-модели объекта — разбираюсь в пространстве и логике архитектуры до того, как приступать к визуализации.</p>
           <p>Интерактивная визуализация — не пассивный ролик: зритель сам выбирает, куда идти и что смотреть.</p>
           <p>Использую механики игровых движков — смена времени суток, логика NPC, интерактивные объекты, — чтобы удержать внимание и точнее передать масштаб и атмосферу пространства.</p>
@@ -287,13 +405,7 @@
     </section>
   </div>
 
-  <!-- 5 · ОПЫТ -->
-  <section class="container" id="experience">
-    <div class="section-label">Опыт</div>
-    <div class="cards-recent" id="experience-cards"></div>
-  </section>
-
-  <!-- 6 · ИНСТРУМЕНТЫ -->
+  <!-- 5 · ИНСТРУМЕНТЫ -->
   <section class="container">
     <div class="section-label">Инструменты</div>
     <div class="skills-grid">
@@ -304,6 +416,34 @@
       <div>
         <div class="skill-group-title">Real-time / визуализация</div>
         <div class="tag-row" id="skills-rt"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · ЧТО ГОВОРЯТ КОЛЛЕГИ -->
+  <section class="container" id="testimonials">
+    <div class="section-label">Что говорят коллеги</div>
+    <div class="testimonials-row">
+      <div class="testimonial-card">
+        <p class="testimonial-text placeholder-text">[Отзыв коллеги — заполнить]</p>
+        <div class="testimonial-meta">
+          <div class="testimonial-name">[Имя]</div>
+          <div class="testimonial-role">[Должность] · <span class="testimonial-company">[Компания]</span></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text placeholder-text">[Отзыв коллеги — заполнить]</p>
+        <div class="testimonial-meta">
+          <div class="testimonial-name">[Имя]</div>
+          <div class="testimonial-role">[Должность] · <span class="testimonial-company">[Компания]</span></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text placeholder-text">[Отзыв коллеги — заполнить]</p>
+        <div class="testimonial-meta">
+          <div class="testimonial-name">[Имя]</div>
+          <div class="testimonial-role">[Должность] · <span class="testimonial-company">[Компания]</span></div>
+        </div>
       </div>
     </div>
   </section>
@@ -330,12 +470,6 @@
 
 <script>
 const DATA = {
-  stats:[
-    ["9 лет","в проектировании и визуализации"],
-    ["4","направления в разделе «Опыт»"],
-    ["6+","реализованных интерактивных кейсов"],
-    ["15+","инструментов в стеке"]
-  ],
   process:[
     ["Понимание пространства","работаю с BIM/3D-моделью объекта, разбираюсь в архитектуре и логике пространства"],
     ["Не просто 3D-тур","зритель сам управляет — выбирает маршрут и точку внимания, а не смотрит готовый ролик"],
@@ -347,13 +481,13 @@ const DATA = {
   skillsRT:["Unreal Engine","Unity","Blender","iClone","SpeedTree","Render 5D","Twinmotion","Lumion"],
 
   experience:[
-    {id:"marta",mark:"M",name:"MARTA",period:"настоящее время",role:"[должность]",
+    {id:"marta",mark:"M",logo:"images/logos/276.jpg",name:"MARTA",period:"настоящее время",role:"[должность]",
      desc:"Текущее место работы. [Коротко о компании и задачах — заполнить.]",note:"1 кейс →",current:true},
-    {id:"krgp",mark:"K",name:"KRGP",period:"[годы работы]",role:"Ведущий архитектор-визуализатор · BIM-координатор",
+    {id:"krgp",mark:"K",logo:"images/logos/KRGP_Group_logo__01.png.webp",name:"KRGP",period:"[годы работы]",role:"Ведущий архитектор-визуализатор · BIM-координатор",
      desc:"Предыдущее место работы — интерактивная визуализация портфолио объектов компании на Unreal Engine.",note:"3 кейса →"},
-    {id:"architect",mark:"A",name:"Работа архитектором",period:"[годы работы]",role:"[должность]",
+    {id:"architect",mark:"A",photo:"images/logos/f320938ea4946947311154cc2569f885ade912b5.webp",name:"Работа архитектором",period:"[годы работы]",role:"[должность]",
      desc:"Опыт работы архитектором до перехода в интерактивную визуализацию — два места работы.",note:"2 кейса →"},
-    {id:"pet",mark:"P",name:"Pet-проекты",period:"личная инициатива",role:"",
+    {id:"pet",mark:"P",photo:"images/logos/JA1Ap3.jpg",name:"Некоммерческие проекты",period:"личная инициатива",role:"",
      desc:"Личные эксперименты вне работы — от необычных пространств до собственной игры.",note:"4 кейса →"}
   ],
   companies:{
@@ -373,7 +507,7 @@ const DATA = {
       casesLabel:"Места работы",cases:["inspat","control-systems"]
     },
     pet:{
-      mark:"P",name:"Pet-проекты",period:"личная инициатива",
+      mark:"P",name:"Некоммерческие проекты",period:"личная инициатива",
       desc:"Нерабочие проекты и эксперименты: необычные интерактивные пространства, инструменты и собственная игра.",
       casesLabel:"Кейсы",cases:["gallery","baku","imperial-disorder","revit"]
     }
@@ -416,7 +550,7 @@ const DATA = {
           "Тот же пайплайн: свет, анимации и VFX, смена времени суток и погоды, аудиодизайн, монтаж"
         ]}
       ]},
-    inspat:{company:"architect",tag:"Работа архитектором · Инспат",
+    inspat:{company:"architect",tag:"Работа архитектором · Инспат",logo:"images/logos/logo.svg",
       title:"Инспат",
       summary:"[Годы, роль — заполнить]",
       blocks:[
@@ -424,7 +558,7 @@ const DATA = {
         ["Роль","[Заполнить]"],
         ["Чем занимался","[Заполнить]"]
       ],media:false,placeholder:true},
-    "control-systems":{company:"architect",tag:"Работа архитектором · Системы управления",
+    "control-systems":{company:"architect",tag:"Работа архитектором · Системы управления",logo:"images/logos/logo (1).svg",
       title:"Системы управления",
       summary:"[Годы, роль — заполнить]",
       blocks:[
@@ -432,28 +566,28 @@ const DATA = {
         ["Роль","[Заполнить]"],
         ["Чем занимался","[Заполнить]"]
       ],media:false,placeholder:true},
-    gallery:{company:"pet",tag:"Pet-проекты · Кейс",
+    gallery:{company:"pet",tag:"Некоммерческие проекты · Кейс",
       title:"Интерактивная галерея с неевклидовым пространством",
       summary:"[Коротко — идея проекта]",
       blocks:[
         ["Идея","[Заполнить]"],
         ["Что сделал","[Заполнить]"]
       ],media:{video:"https://kinescope.io/embed/ub1XmYHRPUV4KVqY4Avw9C?behaviour%5BautoPlay%5D=true&behaviour%5Bloop%5D=true&behaviour%5Bmuted%5D=true&behaviour%5BplaysInline%5D=true&ui%5Bcontrols%5D=false&ui%5BmainPlayButton%5D=false",shots:[null,null,null]},placeholder:true},
-    baku:{company:"pet",tag:"Pet-проекты · Кейс",
+    baku:{company:"pet",tag:"Некоммерческие проекты · Кейс",
       title:"Интерактивный двор Бака с заметками о его истории",
       summary:"[Коротко — идея проекта]",
       blocks:[
         ["Идея","[Заполнить]"],
         ["Что сделал","[Заполнить]"]
       ],media:{video:"https://kinescope.io/embed/e5H3hHp4a78HeDSqcj28yt?behaviour%5BautoPlay%5D=true&behaviour%5Bloop%5D=true&behaviour%5Bmuted%5D=true&behaviour%5BplaysInline%5D=true&ui%5Bcontrols%5D=false&ui%5BmainPlayButton%5D=false",shots:[null,null,null]},placeholder:true},
-    "imperial-disorder":{company:"pet",tag:"Pet-проекты · Игра",
+    "imperial-disorder":{company:"pet",tag:"Некоммерческие проекты · Игра",
       title:"Компьютерная игра «Imperial Disorder»",
       summary:"[Коротко — жанр, платформа, что за игра]",
       blocks:[
         ["О проекте","[Заполнить]"],
         ["Что сделал","[Заполнить]"]
       ],media:{video:"https://kinescope.io/embed/veig4eczoNayRshWKXRRD7?behaviour%5BautoPlay%5D=true&behaviour%5Bloop%5D=true&behaviour%5Bmuted%5D=true&behaviour%5BplaysInline%5D=true&ui%5Bcontrols%5D=false&ui%5BmainPlayButton%5D=false",shots:[null,null,null]},placeholder:true},
-    revit:{company:"pet",tag:"Pet-проекты · Кейс",
+    revit:{company:"pet",tag:"Некоммерческие проекты · Кейс",
       title:"Веб-проигрыватель файлов Revit",
       summary:"[Коротко — для кого и зачем]",
       blocks:[
@@ -463,16 +597,22 @@ const DATA = {
   }
 };
 
+function renderCover(c){
+  if(c.photo) return `<div class="cc-cover has-photo"><img src="${c.photo}" alt="${c.name}"></div>`;
+  if(c.logo) return `<div class="cc-cover"><div class="cc-logo-box"><img src="${c.logo}" alt="${c.name}"></div></div>`;
+  return `<div class="cc-cover"><span class="cc-mark">${c.mark}</span></div>`;
+}
+function renderThumb(cs,num){
+  if(cs.logo) return `<div class="cs-thumb has-logo"><div class="cc-logo-box"><img src="${cs.logo}" alt="${cs.title}"></div></div>`;
+  return `<div class="cs-thumb"><span class="cs-no">0${num}</span></div>`;
+}
 function renderHome(){
-  document.getElementById('stats').innerHTML = DATA.stats.map(s=>`
-    <div class="stat"><div class="s-num">${s[0]}</div><div class="s-cap">${s[1]}</div></div>`).join('');
-
   document.getElementById('skills-bim').innerHTML = DATA.skillsBim.map(t=>`<span class="tag">${t}</span>`).join('');
   document.getElementById('skills-rt').innerHTML = DATA.skillsRT.map(t=>`<span class="tag">${t}</span>`).join('');
 
   document.getElementById('experience-cards').innerHTML = DATA.experience.map(c=>`
     <div class="company-card" onclick="go('company:${c.id}')">
-      <div class="cc-cover"><span class="cc-mark">${c.mark}</span></div>
+      ${renderCover(c)}
       <div class="cc-body">
         <div class="cc-main">
           <div class="cc-top"><span class="cc-name">${c.name}</span><span class="cc-period">${c.period}</span>${c.current?'<span class="current-badge">Сейчас</span>':''}</div>
@@ -509,8 +649,8 @@ function renderCompany(id){
         const heads = row.map((cid,ci)=>{
           const cs = DATA.cases[cid];
           const num = ri*2+ci+1;
-          return `<div class="case-card${isPet?' pet-card':''}" onclick="toggleCase(this,'${cid}')">
-            <div class="cs-thumb"><span class="cs-no">0${num}</span></div>
+          return `<div class="case-card${isPet?' pet-card':''}" onclick="toggleCase(this,'${cid}',${ci+1})">
+            ${renderThumb(cs,num)}
             <div class="cs-body">
               <div class="cs-tag">${cs.tag}</div>
               <div class="cs-title">${cs.title}</div>
@@ -518,7 +658,7 @@ function renderCompany(id){
               <div class="cs-arrow">Открыть →</div>
             </div></div>`;
         }).join('');
-        return `<div class="case-row${row.length===1?' single':''}">${heads}<div class="case-row-detail"></div></div>`;
+        return `<div class="case-row${row.length===1?' single':''}">${heads}<div class="case-connector"></div><div class="case-row-detail"></div></div>`;
       }).join('')}</div>`;
   }
   return html;
@@ -546,25 +686,29 @@ function renderCaseBody(id){
   return html;
 }
 
-function toggleCase(headerEl,id){
+function toggleCase(headerEl,id,col){
   const list = headerEl.closest('.case-list');
   const row = headerEl.closest('.case-row');
   const detail = row.querySelector('.case-row-detail');
   const wasOpenSame = detail.classList.contains('open') && detail.dataset.openId===id;
 
-  list.querySelectorAll('.case-row-detail.open').forEach(d=>{
-    d.classList.remove('open');
-    d.dataset.openId = '';
-  });
-  list.querySelectorAll('.case-card.active').forEach(c=>{
-    c.classList.remove('active');
-    c.querySelector('.cs-arrow').textContent = 'Открыть →';
+  list.querySelectorAll('.case-row.has-open').forEach(r=>{
+    r.classList.remove('has-open');
+    r.querySelector('.case-row-detail').classList.remove('open','attach-1','attach-2');
+    r.querySelector('.case-connector').classList.remove('attach-1','attach-2');
+    r.querySelectorAll('.case-card.active').forEach(c=>{
+      c.classList.remove('active');
+      c.querySelector('.cs-arrow').textContent = 'Открыть →';
+    });
   });
 
   if(!wasOpenSame){
+    const attachClass = col===2 ? 'attach-2' : 'attach-1';
     detail.innerHTML = renderCaseBody(id);
-    detail.classList.add('open');
+    detail.classList.add('open', attachClass);
     detail.dataset.openId = id;
+    row.querySelector('.case-connector').classList.add(attachClass);
+    row.classList.add('has-open');
     headerEl.classList.add('active');
     headerEl.querySelector('.cs-arrow').textContent = 'Свернуть ↑';
   }
@@ -596,6 +740,31 @@ function renderMedia(media){
   return html;
 }
 
+function waveBurst(wrap){
+  const emoji = wrap.querySelector('.wave-emoji');
+  emoji.classList.remove('pop');
+  void emoji.offsetWidth;
+  emoji.classList.add('pop');
+
+  const colors = ['#2D94FF','#FFC93C','#FF6BA0','#ffffff'];
+  const count = 14;
+  for(let i=0;i<count;i++){
+    const p = document.createElement('span');
+    p.className = 'wave-particle';
+    const angle = (Math.PI*2*i)/count + Math.random()*0.5;
+    const dist = 50 + Math.random()*80;
+    const size = 6 + Math.random()*7;
+    p.style.setProperty('--dx', Math.cos(angle)*dist+'px');
+    p.style.setProperty('--dy', Math.sin(angle)*dist+'px');
+    p.style.width = size+'px';
+    p.style.height = size+'px';
+    p.style.marginLeft = -(size/2)+'px';
+    p.style.marginTop = -(size/2)+'px';
+    p.style.background = colors[i % colors.length];
+    wrap.appendChild(p);
+    p.addEventListener('animationend', ()=>p.remove());
+  }
+}
 function toggleStep(el){
   const wasOpen=el.classList.contains('open');
   document.querySelectorAll('.step').forEach(s=>s.classList.remove('open'));
@@ -618,9 +787,20 @@ function router(){
     dyn.classList.remove('active');home.classList.add('active');
   }
 }
+function initNavAvatar(){
+  const heroAvatar = document.querySelector('#home .hero .avatar');
+  const navLogo = document.querySelector('.nav-logo');
+  if(!heroAvatar || !navLogo || !('IntersectionObserver' in window)) return;
+  const io = new IntersectionObserver(([entry])=>{
+    const scrolledPast = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+    navLogo.classList.toggle('scrolled', scrolledPast);
+  },{threshold:0});
+  io.observe(heroAvatar);
+}
 window.addEventListener('hashchange',router);
 renderHome();
 router();
+initNavAvatar();
 </script>
 </body>
 </html>
