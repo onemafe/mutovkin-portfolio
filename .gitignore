@@ -13,6 +13,11 @@ video/
 # Node (in case local tooling like `npx serve` creates this later)
 node_modules/
 
+# Local-only design reference (third-party portfolio site, incl. someone
+# else's resume/cover letter used purely as visual inspiration) — not ours
+# to publish.
+Example/
+
 # OS files
 .DS_Store
 Thumbs.db
