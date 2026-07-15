@@ -421,6 +421,12 @@
     margin-top:clamp(48px,6vw,72px);color:var(--muted-2);font-size:13px}
 
   @media(max-width:860px){
+    /* sticky иногда даёт зазор сверху из-за поведения адресной строки Safari
+       на iOS — fixed надёжно прибивает шапку к самому верху экрана */
+    nav{position:fixed;top:0;left:0;right:0}
+    .page{padding-top:64px}
+    .nav-name{display:none}
+    .nav-avatar{width:32px;opacity:1}
     .container{padding-left:20px;padding-right:20px}
     .nav-inner{padding:0 20px}
     h1{font-size:38px}
@@ -452,7 +458,7 @@
   <div class="nav-inner">
     <div class="nav-logo" onclick="go('home')">
       <span class="nav-avatar"><img src="images/photos/avatar-nav.jpg" alt=""></span>
-      Андрей Мутовкин
+      <span class="nav-name">Андрей Мутовкин</span>
     </div>
     <div class="nav-links">
       <a onclick="navTo('experience')">Опыт</a>
@@ -1293,6 +1299,11 @@ function toggleCase(headerEl,id,col){
 
   if(!wasOpenSame){
     const attachClass = col===2 ? 'attach-2' : 'attach-1';
+    // деталь — один общий элемент на пару карточек; в grid-раскладке (десктоп)
+    // её позицию задаёт CSS (grid-row:3), а во flex-column (мобильная раскладка)
+    // видимый порядок определяется DOM-порядком — поэтому переносим её сразу
+    // после кликнутой карточки, а не той, что была первой/второй в паре.
+    headerEl.insertAdjacentElement('afterend', detail);
     detail.innerHTML = renderCaseBody(id);
     initGalleries(detail);
     detail.classList.add('open', attachClass);
@@ -1301,21 +1312,6 @@ function toggleCase(headerEl,id,col){
     row.classList.add('has-open');
     headerEl.classList.add('active');
     headerEl.querySelector('.cs-arrow').textContent = 'Свернуть ↑';
-
-    // ловим момент завершения раскрытия и сразу двигаем камеру
-    const navH = (document.querySelector('nav')?.offsetHeight || 64) + 16;
-    const scrollToCard = ()=>{
-      const top = headerEl.getBoundingClientRect().top + window.pageYOffset - navH;
-      window.scrollTo({top, behavior:'smooth'});
-    };
-    const onEnd = (e)=>{
-      if(e.propertyName!=='max-height') return;
-      detail.removeEventListener('transitionend', onEnd);
-      clearTimeout(fallback);
-      scrollToCard();
-    };
-    detail.addEventListener('transitionend', onEnd);
-    const fallback = setTimeout(()=>{ detail.removeEventListener('transitionend', onEnd); scrollToCard(); }, 450);
   }
 }
 
