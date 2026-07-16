@@ -1160,7 +1160,7 @@ function renderTools(){
     return `<line class="tg-edge e-${a} e-${b}" x1="${na.x}" y1="${na.y}" x2="${nb.x}" y2="${nb.y}" vector-effect="non-scaling-stroke"/>`;
   }).join('');
   const els=nodes.map(n=>{
-    const inner = n.slug ? `<img src="https://cdn.simpleicons.org/${n.slug}/181818" alt="${n.name}">`
+    const inner = n.slug ? `<img src="images/tools/${n.slug}.svg" alt="${n.name}" loading="lazy">`
       : n.emoji ? `<span style="font-size:26px;line-height:1">${n.emoji}</span>`
       : `<span class="mono">${n.mono}</span>`;
     return `<div class="tg-node${n.central?' central':''}" data-id="${n.id}" style="left:${n.x}%;top:${n.y}%">
